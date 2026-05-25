@@ -1,0 +1,55 @@
+{
+  "name": "@smoker_winston/qtype",
+  "version": "0.1.0",
+  "description": "Kazakh language platform SDK — spellcheck, autocorrect, definitions, and morphology-aware lookup over the qType API.",
+  "keywords": [
+    "kazakh",
+    "kk",
+    "spellcheck",
+    "autocorrect",
+    "morphology",
+    "lemmatizer",
+    "dictionary",
+    "i18n",
+    "nlp"
+  ],
+  "homepage": "https://github.com/Tako0502/qType#readme",
+  "bugs": {
+    "url": "https://github.com/Tako0502/qType/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tako0502/qType.git",
+    "directory": "sdk"
+  },
+  "license": "MIT",
+  "author": "Talant Erzhan",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.cjs.json && node scripts/rename-cjs.mjs",
+    "test": "node --test --enable-source-maps test/smoke.test.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.11.0"
+  }
+}

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/QType.COMMON/QType.COMMON.csproj" />
+    <Project Path="src/QType.DBHelper/QType.DBHelper.csproj" />
+    <Project Path="src/QType.Importer/QType.Importer.csproj" />
+    <Project Path="src/QType.MODEL/QType.MODEL.csproj" />
+    <Project Path="src/QType.Web/QType.Web.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>qType — Kazakh language platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root { --accent: #00afca; --accent-dark: #008aa1; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .accent-bg { background-color: var(--accent); }
+    .accent-text { color: var(--accent); }
+    .accent-border { border-color: var(--accent); }
+    .accent-bg-soft { background-color: rgba(0, 175, 202, 0.08); }
+    .entry-html p { margin-bottom: 0.6rem; line-height: 1.65; }
+    .entry-html i { color: #475569; font-style: italic; }
+    .entry-html b { color: #0f172a; font-weight: 600; }
+    .fade-in { animation: fade 0.18s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+    .suggestion-chip:hover { background: var(--accent); color: white; border-color: var(--accent); }
+    kbd { font-family: 'JetBrains Mono', monospace; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-size: 0.75rem; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="border-b border-slate-200 bg-white">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg accent-bg flex items-center justify-center text-white font-bold text-lg">q</div>
+        <div>
+          <div class="font-semibold text-lg leading-none">qType</div>
+          <div class="text-xs text-slate-500 mt-0.5">Kazakh language platform</div>
+        </div>
+      </div>
+      <div id="stats" class="flex gap-2 text-xs">
+        <span class="px-3 py-1.5 rounded-full bg-slate-100 mono text-slate-600">loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-10">
+
+    <!-- Hero -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900 mb-3">Type a Kazakh word</h1>
+      <p class="text-slate-600 max-w-xl mx-auto">Spell-check, autocorrect, and look up definitions across <span class="font-semibold text-slate-900" id="sourcesInline">181</span> Kazakh dictionaries.</p>
+    </div>
+
+    <!-- Search box -->
+    <div class="relative max-w-2xl mx-auto">
+      <div class="relative">
+        <input
+          id="search"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="сөздік, абад, балам, оқушы..."
+          class="w-full px-6 py-4 pr-14 text-lg rounded-2xl border-2 border-slate-200 focus:outline-none focus:border-cyan-500 transition bg-white shadow-sm" />
+        <div id="searchIcon" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+      </div>
+
+      <!-- Live status bar -->
+      <div id="status" class="mt-3 min-h-[2rem] text-sm flex items-center gap-2"></div>
+
+      <!-- Quick chips -->
+      <div class="mt-4 flex flex-wrap gap-2 justify-center text-sm">
+        <span class="text-slate-400 self-center text-xs">try:</span>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="сөздік">сөздік</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="абад">абад</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="ғылым">ғылым</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="мектеп">мектеп</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="сөздк">сөздк (typo)</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="кітабым">кітабым (poss1sg)</button>
+        <button class="quick suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition" data-w="сөздіктерден">сөздіктерден (pl+abl)</button>
+        <button id="randomBtn" class="suggestion-chip px-3 py-1 rounded-full border border-slate-200 text-slate-600 transition">🎲 random</button>
+      </div>
+    </div>
+
+    <!-- Results: suggestions + definition -->
+    <div id="results" class="mt-10 max-w-3xl mx-auto"></div>
+
+    <!-- Footer with API hint -->
+    <footer class="mt-20 text-center text-xs text-slate-400">
+      REST API: <a href="/api" class="accent-text hover:underline mono">GET /api</a> &middot;
+      <a href="https://github.com" class="hover:underline">github</a> &middot;
+      MCP server coming soon
+    </footer>
+  </main>
+
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const statsEl = $('#stats');
+    const searchEl = $('#search');
+    const statusEl = $('#status');
+    const resultsEl = $('#results');
+    const sourcesInlineEl = $('#sourcesInline');
+
+    // ───── stats ─────
+    async function loadStats() {
+      try {
+        const r = await fetch('/api/stats');
+        const s = await r.json();
+        sourcesInlineEl.textContent = s.sources.toLocaleString();
+        statsEl.innerHTML = `
+          <span class="px-3 py-1.5 rounded-full bg-slate-100 mono text-slate-700">${s.entries.toLocaleString()} entries</span>
+          <span class="px-3 py-1.5 rounded-full bg-slate-100 mono text-slate-700">${s.lemmas.toLocaleString()} lemmas</span>
+          <span class="px-3 py-1.5 rounded-full bg-slate-100 mono text-slate-700">${s.sources} sources</span>
+        `;
+      } catch (e) {
+        statsEl.innerHTML = `<span class="px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-xs">API offline</span>`;
+      }
+    }
+
+    // ───── debounce util ─────
+    let timer = null;
+    function debounce(fn, ms) {
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), ms);
+      };
+    }
+
+    let currentSeq = 0;
+
+    // ───── core lookup flow ─────
+    async function lookup(word) {
+      const seq = ++currentSeq;
+      if (!word || word.trim().length === 0) {
+        statusEl.innerHTML = '';
+        resultsEl.innerHTML = '';
+        return;
+      }
+
+      statusEl.innerHTML = `<span class="text-slate-400">checking…</span>`;
+
+      const [spell, suggest] = await Promise.all([
+        fetch(`/api/spellcheck?word=${encodeURIComponent(word)}`).then(r => r.json()),
+        fetch(`/api/suggest?word=${encodeURIComponent(word)}&k=8`).then(r => r.json()),
+      ]);
+      if (seq !== currentSeq) return; // stale
+
+      renderStatus(spell);
+      renderSuggestions(spell, suggest);
+
+      if (spell.valid) {
+        const def = await fetch(`/api/define?word=${encodeURIComponent(word)}`).then(r => r.json());
+        if (seq !== currentSeq) return;
+        renderDefinition(def);
+      }
+    }
+
+    function renderStatus(spell) {
+      if (spell.valid) {
+        const isInflected = spell.via === 'wordform';
+        const tagBadge = isInflected && spell.tag
+          ? `<span class="ml-1 px-2 py-0.5 rounded-md bg-cyan-100 text-cyan-700 mono text-xs">${escapeHtml(spell.tag)}</span>`
+          : '';
+        const lemmaLine = isInflected
+          ? `<span class="text-slate-500 text-xs">inflected form of <button class="lemma-jump font-semibold text-cyan-700 hover:underline mono" data-w="${escapeHtml(spell.lemma)}">${escapeHtml(spell.lemma)}</button>${tagBadge}</span>`
+          : `<span class="text-slate-500 text-xs">lemma <span class="mono">#${spell.lemmaId}</span>, ${spell.headwordHits} headword hit${spell.headwordHits === 1 ? '' : 's'}</span>`;
+        statusEl.innerHTML = `
+          <svg class="text-emerald-500" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-emerald-700 font-medium">valid Kazakh word</span>
+          <span class="text-slate-400">·</span>
+          ${lemmaLine}
+        `;
+        // wire lemma jump
+        const j = document.querySelector('.lemma-jump');
+        if (j) j.addEventListener('click', () => { searchEl.value = j.dataset.w; lookup(j.dataset.w); searchEl.focus(); });
+      } else if (spell.normalized && spell.normalized.length > 0) {
+        statusEl.innerHTML = `
+          <svg class="text-rose-500" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          <span class="text-rose-700 font-medium">not in dictionary</span>
+          <span class="text-slate-400 text-xs">— did you mean one of these?</span>
+        `;
+      } else {
+        statusEl.innerHTML = '';
+      }
+    }
+
+    function renderSuggestions(spell, suggest) {
+      const sugs = suggest.suggestions || [];
+      if (sugs.length === 0) {
+        resultsEl.innerHTML = '';
+        return;
+      }
+
+      // hide identical suggestions when word is valid
+      const visible = spell.valid
+        ? sugs.filter(s => s.distance > 0).slice(0, 5)
+        : sugs;
+
+      if (visible.length === 0 && spell.valid) {
+        // valid word, no alternatives — just clear suggestion area, definition will render
+        return;
+      }
+
+      const html = `
+        <div class="fade-in">
+          <div class="text-xs uppercase tracking-wider text-slate-400 mb-2">${spell.valid ? 'related' : 'suggestions'}</div>
+          <div class="flex flex-wrap gap-2 mb-8">
+            ${visible.map(s => `
+              <button class="sug suggestion-chip group inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition text-sm" data-w="${escapeHtml(s.form)}">
+                <span>${escapeHtml(s.form)}</span>
+                <span class="text-xs text-slate-400 group-hover:text-cyan-100 mono">~${s.distance}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      if (spell.valid) {
+        // append suggestions BELOW the definition (which will render next)
+        resultsEl.innerHTML = html;
+      } else {
+        // user is mis-typing — surface suggestions prominently, no definition
+        resultsEl.innerHTML = html;
+      }
+
+      attachSuggestHandlers();
+    }
+
+    function renderDefinition(def) {
+      if (!def.entries || def.entries.length === 0) {
+        return;
+      }
+      const sugBlock = resultsEl.innerHTML; // preserve suggestions if rendered
+
+      const headword = def.normalized;
+      const phraseBadge = def.isPhrase ? `<span class="ml-2 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs">phrase</span>` : '';
+      const dialBadge = def.isDialectal ? `<span class="ml-2 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs">dialectal</span>` : '';
+
+      const entriesHtml = def.entries.map((e, i) => `
+        <article class="border border-slate-200 rounded-xl p-5 bg-white">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <div class="text-xs text-slate-500">
+              <span class="mono accent-text">#${i + 1}</span>
+              · source <span class="mono">${e.sourceId}</span>
+              ${e.entryDate ? `· <span class="mono">${e.entryDate}</span>` : ''}
+            </div>
+          </div>
+          ${e.sourceTitle ? `<div class="text-xs text-slate-500 italic mb-3 line-clamp-2">${escapeHtml(e.sourceTitle)}</div>` : ''}
+          <div class="entry-html text-slate-800">${sanitize(e.rawHtml)}</div>
+        </article>
+      `).join('');
+
+      resultsEl.innerHTML = `
+        <div class="fade-in">
+          <div class="flex items-baseline mb-1">
+            <h2 class="text-3xl font-bold text-slate-900">${escapeHtml(headword)}</h2>
+            ${phraseBadge}${dialBadge}
+          </div>
+          <div class="text-sm text-slate-500 mb-6">
+            Found in <span class="font-semibold text-slate-700">${def.entries.length}</span>
+            source ${def.entries.length === 1 ? 'dictionary' : 'dictionaries'}
+            · lemma <span class="mono">#${def.lemmaId}</span>
+          </div>
+          <div class="space-y-3">
+            ${entriesHtml}
+          </div>
+          ${sugBlock ? `<div class="mt-8">${sugBlock}</div>` : ''}
+        </div>
+      `;
+      attachSuggestHandlers();
+    }
+
+    // ───── handlers ─────
+    function attachSuggestHandlers() {
+      document.querySelectorAll('.sug').forEach(b => {
+        b.addEventListener('click', () => {
+          const w = b.getAttribute('data-w');
+          searchEl.value = w;
+          lookup(w);
+          searchEl.focus();
+        });
+      });
+    }
+
+    document.querySelectorAll('.quick').forEach(b => {
+      b.addEventListener('click', () => {
+        const w = b.getAttribute('data-w');
+        searchEl.value = w;
+        lookup(w);
+        searchEl.focus();
+      });
+    });
+
+    $('#randomBtn').addEventListener('click', async () => {
+      const r = await fetch('/api/random').then(r => r.json());
+      searchEl.value = r.text;
+      lookup(r.text);
+      searchEl.focus();
+    });
+
+    searchEl.addEventListener('input', debounce(() => lookup(searchEl.value), 220));
+    searchEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        lookup(searchEl.value);
+      }
+    });
+
+    // very minimal HTML allow-list — dictionary content is trusted local data
+    function sanitize(html) {
+      if (!html) return '';
+      // strip <script> defensively even though sources are trusted
+      return html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // boot
+    loadStats();
+    searchEl.focus();
+  </script>
+</body>
+</html>

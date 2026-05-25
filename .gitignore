@@ -1,0 +1,42 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userprefs
+.vs/
+.idea/
+*.dll
+*.pdb
+launchSettings.local.json
+
+# Node / SDK
+sdk/node_modules/
+sdk/dist/
+sdk/*.tgz
+sdk/.npmrc
+
+# Logs
+*.log
+/tmp/qtype_*.log
+
+# Local SQL data
+*.dump
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Secrets (sanity guard)
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+# Source data files (too big for the repo)
+data/sq_items.json
+data/sq_source.json
