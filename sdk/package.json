@@ -1,6 +1,6 @@
 {
   "name": "@smoker_winston/qtype",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Kazakh language platform SDK — spellcheck, autocorrect, definitions, and morphology-aware lookup over the qType API.",
   "keywords": [
     "kazakh",

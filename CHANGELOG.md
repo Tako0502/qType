@@ -2,9 +2,16 @@
 
 All notable changes to qType. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] — 2026-05-25
 
-### Added
+### SDK
+- Added `Suggestion.frequency` field (corpus-derived count from Wikipedia kk). Used by backend for tie-breaking at the same edit distance. Non-breaking additive change.
+- Bumped to `@smoker_winston/qtype@0.2.0`.
+
+### MCP server
+- Initial publish as `@smoker_winston/qtype-mcp@0.2.0`. Versioned to match the SDK.
+
+### Backend
 - Stage 1 — Kazakh POS classification (`KazakhPos.Classify`) from suffix heuristics; 20,659 verbs / 98,180 nouns / 9,849 adjectives / 4,207 adverbs identified.
 - Verb conjugation in `KazakhVerb.Conjugate`: past (with full person), present-future, future-intent, imperative, optative, participle, perfect, converbs, agent noun, gerund, negative forms. Routed via `KazakhInflector.Inflect(lemma, pos)`.
 - Stage 5 — Leipzig Wikipedia kk corpus frequency loader (`FrequencyImporter`, 169k word forms with counts).

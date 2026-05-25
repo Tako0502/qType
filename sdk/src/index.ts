@@ -60,6 +60,12 @@ export interface Suggestion {
   distance: number;
   /** Whether the candidate was discovered as a lemma directly, or via an inflected form. */
   source: 'lemma' | 'form';
+  /**
+   * Corpus frequency of this form (Wikipedia kk). Higher = more common.
+   * Used by the backend to rank ties at the same edit distance.
+   * `0` when the form isn't in the frequency table.
+   */
+  frequency: number;
 }
 
 export interface SuggestResult {
