@@ -4,6 +4,7 @@ using QType.Web.Services;
 var builder = WebApplication.CreateBuilder(args);
 // appsettings.Local.json is gitignored — developers override secrets there.
 builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<DictionaryService>();
 
 var app = builder.Build();

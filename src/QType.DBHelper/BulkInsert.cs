@@ -12,14 +12,15 @@ public static class BulkInsert
         string table,
         IReadOnlyList<string> columns,
         IReadOnlyList<object[]> rows,
-        int batchSize = 1000)
+        int batchSize = 1000,
+        bool ignoreDuplicates = false)
     {
         if (rows.Count == 0) return 0;
         var total = 0;
         for (var offset = 0; offset < rows.Count; offset += batchSize)
         {
             var take = Math.Min(batchSize, rows.Count - offset);
-            total += await InsertBatchAsync(conn, tx, table, columns, rows, offset, take);
+            total += await InsertBatchAsync(conn, tx, table, columns, rows, offset, take, ignoreDuplicates);
         }
         return total;
     }
@@ -31,10 +32,11 @@ public static class BulkInsert
         IReadOnlyList<string> columns,
         IReadOnlyList<object[]> rows,
         int offset,
-        int count)
+        int count,
+        bool ignoreDuplicates)
     {
         var sb = new StringBuilder(64 * 1024);
-        sb.Append("INSERT INTO ").Append(table).Append(" (");
+        sb.Append(ignoreDuplicates ? "INSERT IGNORE INTO " : "INSERT INTO ").Append(table).Append(" (");
         for (var i = 0; i < columns.Count; i++)
         {
             if (i > 0) sb.Append(',');

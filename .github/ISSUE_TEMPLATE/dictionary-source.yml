@@ -1,0 +1,33 @@
+name: Add a new dictionary source
+description: Propose adding a new Kazakh dictionary or glossary to the corpus.
+labels: [enhancement, data]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Dictionary title (bibliographic)
+      placeholder: "Қазақ әдеби тілінің сөздігі. Том 7. 2011."
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Where can we get the source data?
+      placeholder: URL, file format, or contact
+  - type: dropdown
+    id: rights
+    attributes:
+      label: Licensing status
+      options:
+        - Public domain (past copyright)
+        - Author/publisher granted explicit permission (attach letter)
+        - Government open data / official glossary
+        - Wiktionary / community-edited
+        - Unknown — please review
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Approximate entry count + content type
+      placeholder: "~5,000 entries, terminology dictionary for biology"

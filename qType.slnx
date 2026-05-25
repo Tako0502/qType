@@ -6,4 +6,7 @@
     <Project Path="src/QType.MODEL/QType.MODEL.csproj" />
     <Project Path="src/QType.Web/QType.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/QType.Tests/QType.Tests.csproj" />
+  </Folder>
 </Solution>

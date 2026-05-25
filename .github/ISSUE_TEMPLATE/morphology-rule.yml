@@ -1,0 +1,37 @@
+name: Morphology rule bug
+description: A Kazakh word is inflected incorrectly (wrong suffix, wrong sandhi, wrong harmony).
+labels: [bug, morphology]
+body:
+  - type: input
+    id: lemma
+    attributes:
+      label: Lemma (citation form)
+      placeholder: "сөздік"
+    validations:
+      required: true
+  - type: input
+    id: form
+    attributes:
+      label: User-typed inflected form
+      placeholder: "сөздіктерден"
+    validations:
+      required: true
+  - type: input
+    id: actual
+    attributes:
+      label: What qtype_spellcheck returned
+      placeholder: "valid=false (or wrong lemma / wrong tag)"
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: What it should return
+      placeholder: "valid=true, lemma=сөздік, tag=pl+abl"
+    validations:
+      required: true
+  - type: textarea
+    id: rule
+    attributes:
+      label: Which rule do you think is wrong?
+      description: Optional but helpful. Point at a file/function in src/QType.COMMON/Morphology/.

@@ -14,18 +14,24 @@ public enum FinalClass
 
 public static class KazakhPhonology
 {
-    public const string BackVowels = "аоұыуяёю";
-    public const string FrontVowels = "әеөүиіэ";
-    public const string Vowels = BackVowels + FrontVowels;
+    public const string BackVowels = "аоұыя";
+    public const string FrontVowels = "әеөүіэ";
+    // у and и are harmonically neutral in modern Kazakh — they don't override
+    // the harmony of the preceding vowel. Treated as vowels for phonology but
+    // skipped when determining harmony.
+    public const string NeutralVowels = "уию";
+    public const string Vowels = BackVowels + FrontVowels + NeutralVowels;
 
     public static VowelHarmony GetHarmony(string lemma)
     {
-        // Rightmost vowel governs harmony
+        // Scan from the END for the rightmost NON-neutral vowel.
+        // "білу" → і governs (front), не у.  "оқу" → о governs (back).
         for (var i = lemma.Length - 1; i >= 0; i--)
         {
             var c = lemma[i];
             if (FrontVowels.Contains(c)) return VowelHarmony.Front;
             if (BackVowels.Contains(c)) return VowelHarmony.Back;
+            // skip neutral vowels and consonants
         }
         return VowelHarmony.Back;
     }

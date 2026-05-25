@@ -1,0 +1,34 @@
+name: Bug report
+description: Something's wrong in the API, SDK, MCP server, or pipeline.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Concrete behavior you saw.
+      placeholder: "qtype_spellcheck returned valid=false for 'балалар' but it should be valid."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "valid=true with lemma='бала' and tag='pl'"
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: Exact API call, SDK code, or CLI command. Include input and output.
+      render: bash
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: SDK / MCP / backend version (e.g. "@smoker_winston/qtype@0.1.0", commit hash for backend)
+    validations:
+      required: true

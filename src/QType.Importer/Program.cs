@@ -43,8 +43,16 @@ public static class Program
                 case "lemmas":
                     await LemmaExtractor.RunAsync();
                     break;
+                case "pos":
+                    await PosClassifier.RunAsync();
+                    break;
                 case "morph":
                     await MorphologyGenerator.RunAsync();
+                    break;
+                case "freq":
+                    var freqPath = args.Length > 1 ? args[1] : ExpandPath("~/Downloads/kaz_wikipedia_2021_100K-words.txt");
+                    var freqSrc = args.Length > 2 ? args[2] : "wikipedia-kk";
+                    await FrequencyImporter.RunAsync(freqPath, freqSrc);
                     break;
                 case "morph-test":
                     var samples = args.Length > 1
@@ -55,6 +63,17 @@ public static class Program
                         Console.WriteLine($"\n[{s}] harmony={QType.COMMON.Morphology.KazakhPhonology.GetHarmony(s)} final={QType.COMMON.Morphology.KazakhPhonology.GetFinalClass(s)}");
                         foreach (var inf in QType.COMMON.Morphology.KazakhInflector.Inflect(s))
                             Console.WriteLine($"  {inf.Form,-20} {inf.Tag}");
+                    }
+                    break;
+                case "verb-test":
+                    var vsamples = args.Length > 1
+                        ? args[1..]
+                        : new[] { "жазу", "оқу", "келу", "бару", "көру", "білу", "айту" };
+                    foreach (var s in vsamples)
+                    {
+                        Console.WriteLine($"\n[{s}]");
+                        foreach (var inf in QType.COMMON.Morphology.KazakhVerb.Conjugate(s))
+                            Console.WriteLine($"  {inf.Form,-25} {inf.Tag}");
                     }
                     break;
                 case "lemma-test":

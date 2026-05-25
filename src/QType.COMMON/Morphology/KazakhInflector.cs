@@ -14,16 +14,25 @@ public record InflectedForm(string Form, string Tag);
 ///   - No verb conjugation (needs POS classification from Stage 1).
 public static class KazakhInflector
 {
-    public static IEnumerable<InflectedForm> Inflect(string lemma)
+    /// Inflect a lemma. If `pos` is provided, dispatches to verb conjugation
+    /// for verbs; otherwise applies nominal morphology (plural, case, possessive).
+    public static IEnumerable<InflectedForm> Inflect(string lemma, string pos = "")
     {
         if (string.IsNullOrWhiteSpace(lemma)) yield break;
         lemma = lemma.Trim();
+
+        // Route verbs to the verb conjugator
+        if (pos == "verb")
+        {
+            foreach (var f in KazakhVerb.Conjugate(lemma)) yield return f;
+            yield break;
+        }
 
         var h = KazakhPhonology.GetHarmony(lemma);
         var fc = KazakhPhonology.GetFinalClass(lemma);
 
         // ── Plural ──
-        var pluralBack = PluralSuffixBack(fc);
+        var pluralBack = PluralSuffixBack(lemma);
         if (pluralBack != null)
         {
             yield return new InflectedForm(lemma + KazakhPhonology.Harmonize(pluralBack, h), "pl");
@@ -52,7 +61,7 @@ public static class KazakhInflector
         if (pluralBack != null)
         {
             var pluralStem = lemma + KazakhPhonology.Harmonize(pluralBack, h);
-            // Plural stems all end in "р" → Liquid. Apply singular-case rules with FC=Liquid.
+            // Plural stems all end in "р" — apply singular-case rules with R-final behavior.
             foreach (var (suf, tag) in SingularCases(FinalClass.Liquid, h))
             {
                 if (tag is "loc" or "dat" or "abl" or "acc")
@@ -63,17 +72,24 @@ public static class KazakhInflector
 
     // ──────────────────────────────────────────────────────────────────
     //                      Plural
-    // After Vowel / Liquid → -лар    (vowels, л р й з ж)
-    // After Nasal / Voiced → -дар    (м н ң, б в г д)
-    // After Voiceless      → -тар    (п ф к қ с т ш х ц ч щ һ)
+    // Authoritative Kazakh plural rule:
+    //   After vowels and р/й/у              → -лар/-лер
+    //   After л/м/н/ң/з/ж + voiced (б,в,г,д) → -дар/-дер
+    //   After voiceless (п,ф,к,қ,с,т,ш,х,ц,ч,щ,һ) → -тар/-тер
+    // (Note: this is finer-grained than the generic FinalClass split.)
     // ──────────────────────────────────────────────────────────────────
-    private static string PluralSuffixBack(FinalClass fc) => fc switch
+    private static string PluralSuffixBack(string lemma)
     {
-        FinalClass.Vowel or FinalClass.Liquid => "лар",
-        FinalClass.Nasal or FinalClass.Voiced => "дар",
-        FinalClass.Voiceless => "тар",
-        _ => null
-    };
+        if (string.IsNullOrEmpty(lemma)) return null;
+        var c = lemma[^1];
+        if (KazakhPhonology.Vowels.Contains(c)) return "лар";
+        return c switch
+        {
+            'р' or 'й' or 'у' => "лар",
+            'п' or 'ф' or 'к' or 'қ' or 'с' or 'т' or 'ш' or 'х' or 'ц' or 'ч' or 'щ' or 'һ' => "тар",
+            _ => "дар",
+        };
+    }
 
     // ──────────────────────────────────────────────────────────────────
     //                      Singular case suffixes

@@ -35,8 +35,8 @@ public static class MorphologyGenerator
 
         await conn.ExecuteAsync("TRUNCATE qwordform");
 
-        var lemmas = await conn.QueryAsync<(int Id, string Text)>(
-            "SELECT id, text FROM qlemma WHERE isPhrase = 0",
+        var lemmas = await conn.QueryAsync<(int Id, string Text, string Pos)>(
+            "SELECT id, text, pos FROM qlemma WHERE isPhrase = 0",
             commandTimeout: 600);
 
         var batch = new List<object[]>(batchSize);
@@ -44,11 +44,11 @@ public static class MorphologyGenerator
         long totalForms = 0;
         long processedLemmas = 0;
 
-        foreach (var (id, text) in lemmas)
+        foreach (var (id, text, pos) in lemmas)
         {
             processedLemmas++;
             var seen = new HashSet<string>();
-            foreach (var inf in KazakhInflector.Inflect(text))
+            foreach (var inf in KazakhInflector.Inflect(text, pos ?? ""))
             {
                 if (inf.Form.Length == 0 || inf.Form.Length > 128) continue;
                 if (!seen.Add(inf.Form)) continue;

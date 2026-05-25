@@ -162,6 +162,14 @@ The AI then has these tools available: `qtype_spellcheck`, `qtype_suggest`, `qty
 
 .NET 10 · MySQL 8 · Dapper · Dapper.SimpleCRUD · MySqlConnector · ASP.NET Core Minimal API · TypeScript SDK
 
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md). High-leverage areas right now: irregular-verb lexicon, voice morphology (passive/causative/reflexive), public-domain dictionary sources, frontend i18n (Kazakh / Russian strings).
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the release history.
+
 ## Next step recommendations
 
 The single highest-leverage move is **Stage 4 — morphology wiring** (apertium-kaz). Without it the autocorrect can't handle inflected forms, which is most of real-world Kazakh typing. Stage 3 (HTML parsing) is the second priority — it turns the raw entries into structured `qdefinition` / `qetymology` / `qexample` rows that the API can return in clean JSON instead of HTML blobs.
