@@ -45,3 +45,4 @@ data/sq_source.json
 mcp/node_modules/
 mcp/dist/
 mcp/*.tgz
+mcp/.npmrc
