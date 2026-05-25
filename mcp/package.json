@@ -1,0 +1,60 @@
+{
+  "name": "@smoker_winston/qtype-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for qType — gives any MCP client (Claude Desktop, Cursor, Claude Code, Zed, ...) inflection-aware Kazakh spellcheck, autocorrect, lemmatization, and dictionary lookup.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "kazakh",
+    "kk",
+    "spellcheck",
+    "autocorrect",
+    "morphology",
+    "lemmatizer",
+    "dictionary",
+    "i18n",
+    "nlp",
+    "claude"
+  ],
+  "homepage": "https://github.com/Tako0502/qType#readme",
+  "bugs": {
+    "url": "https://github.com/Tako0502/qType/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tako0502/qType.git",
+    "directory": "mcp"
+  },
+  "license": "MIT",
+  "author": "Talant Erzhan",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "qtype-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@smoker_winston/qtype": "^0.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.0"
+  }
+}

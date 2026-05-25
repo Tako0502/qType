@@ -14,6 +14,8 @@ The foundation is in place and **ready for manual testing**: the full 379k Sozdi
 | **Stage 4 — morphology (rule-based, 2.2M inflected forms)** | ✅ |
 | REST API (spellcheck / suggest / define / random / stats) | ✅ |
 | Frontend demo (Tailwind, live spellcheck, inflection-aware) | ✅ |
+| TypeScript SDK (`@smoker_winston/qtype` on npm) | ✅ |
+| **MCP server** (`@smoker_winston/qtype-mcp` on npm) | ✅ |
 | Stage 1 — classify (POS, proper-noun heuristic) | ☐ |
 | Stage 3 — HTML parse (definitions / etymology / examples) | ☐ |
 | Stage 5 — frequency (corpus) | ☐ |
@@ -136,6 +138,25 @@ const def = await qt.define('балалар');
 ```
 
 Full SDK docs: [sdk/README.md](sdk/README.md).
+
+## Use it from any AI client (MCP)
+
+qType ships an MCP server so Claude Desktop, Claude Code, Cursor, Zed, and other MCP clients can call its tools directly. Add this to your client's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "qtype": {
+      "command": "npx",
+      "args": ["-y", "@smoker_winston/qtype-mcp"]
+    }
+  }
+}
+```
+
+For Claude Code: `claude mcp add qtype -- npx -y @smoker_winston/qtype-mcp`.
+
+The AI then has these tools available: `qtype_spellcheck`, `qtype_suggest`, `qtype_define`, `qtype_lemmatize`, `qtype_random_word`, `qtype_stats`. Full MCP setup docs: [mcp/README.md](mcp/README.md).
 
 ## Stack
 

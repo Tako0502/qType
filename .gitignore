@@ -40,3 +40,8 @@ secrets.json
 # Source data files (too big for the repo)
 data/sq_items.json
 data/sq_source.json
+
+# MCP build artifacts
+mcp/node_modules/
+mcp/dist/
+mcp/*.tgz
